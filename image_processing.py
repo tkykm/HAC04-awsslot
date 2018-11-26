@@ -43,4 +43,25 @@ def create_image(services):
       logo = cv2.imread(logo_path, 1)
       background = picture_in_picture(background, logo , index)
       index += 1
+  #cv2.imwrite("tmp/image.png", background)
   return background
+
+def draw_line(image, line_num, color):
+  if line_num == 0:
+    sp = (230, 125)
+    ep = (794, 125)
+  elif line_num == 1:
+    sp = (230, 300)
+    ep = (794, 300)
+  elif line_num == 2:
+    sp = (230, 475)
+    ep = (794, 475)
+  elif line_num == 3:
+    sp = (237, 550)
+    ep = (751, 50)
+  elif line_num == 4:
+    sp = (273, 50)
+    ep = (751, 550)
+
+  cv2.line(image, sp, ep, color, thickness=3)
+  cv2.imwrite("tmp/image.png", image)
