@@ -11,7 +11,7 @@ from ask_sdk_core.dispatch_components import (
 from ask_sdk_core.utils import is_request_type, is_intent_name
 from ask_sdk_core.handler_input import HandlerInput
 
-from ask_sdk_model.ui import SimpleCard
+from ask_sdk_model.ui import SimpleCard, StandardCard
 from ask_sdk_model import Response
 
 
@@ -57,7 +57,7 @@ logger.setLevel(logging.DEBUG)
 
 
 # Built-in Intent Handlers
-class GetNewFactHandler(AbstractRequestHandler):
+class GameHandler(AbstractRequestHandler):
     """Handler for Skill Launch and GetNewFact Intent."""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
@@ -70,11 +70,17 @@ class GetNewFactHandler(AbstractRequestHandler):
 
         random_fact = random.choice(data)
         speech = GET_FACT_MESSAGE + random_fact
-
-        handler_input.response_builder.speak(speech).set_card(
-            SimpleCard(SKILL_NAME, random_fact))
+        response_builder = handler_input.response_builder
+        response_builder.speak(speech)
+        response_builder.set_card(
+          StandardCard(
+            title="Card Title",
+            text="Hey this is a sample card",
+            image=ui.Image(
+              small_image_url="<Small Image URL>",
+              large_image_url="<Large Image URL>"
+            )
         return handler_input.response_builder.response
-
 
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
@@ -179,7 +185,7 @@ class ResponseLogger(AbstractResponseInterceptor):
 
 
 # Register intent handlers
-sb.add_request_handler(GetNewFactHandler())
+sb.add_request_handler(GameHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
