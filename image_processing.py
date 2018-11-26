@@ -76,3 +76,4 @@ def create_image(services, slot_results):
   image_path = "tmp/image.png"
   cv2.imwrite(image_path, background)
   upload_s3(image_path)
+  return "http://reinventalexajap.s3-website-us-east-1.amazonaws.com/result.png"
