@@ -5,7 +5,6 @@ import random
 class Slot:
   AWS_SERVICES = [
     "s3",
-    "cloudfront",
     "lambda",
     "iam"
   ]
