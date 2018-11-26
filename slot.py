@@ -6,7 +6,6 @@ class Slot:
   AWS_SERVICES = [
     "s3",
     "cloudfront",
-    "sns",
     "lambda",
     "iam"
   ]
