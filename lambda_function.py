@@ -12,8 +12,10 @@ from ask_sdk_core.utils import is_request_type, is_intent_name
 from ask_sdk_core.handler_input import HandlerInput
 
 from ask_sdk_model.ui import SimpleCard, StandardCard
+from ask_sdk_model import ui
 from ask_sdk_model import Response
-
+from slot import Slot
+import image_processing
 
 # =========================================================================================================================================
 # TODO: The items below this comment need your attention.
@@ -64,10 +66,31 @@ class GameHandler(AbstractRequestHandler):
         return (is_request_type("LaunchRequest")(handler_input) or
                 is_intent_name("GameIntent")(handler_input))
 
+
+
+    def slotmatch(self, slotresult):
+       result = [ False, False, False, False, False ]
+       if slotresult[0][0]["name"] == slotresult[1][0]["name"] == slotresult[2][0]["name"]:
+           result[0] = True
+       if slotresult[0][1]["name"] == slotresult[1][1]["name"] == slotresult[2][1]["name"]:
+           result[1] = True
+       if slotresult[0][2]["name"] == slotresult[1][2]["name"] == slotresult[2][2]["name"]:
+           result[2] = True
+       if slotresult[0][0]["name"] == slotresult[1][1]["name"] == slotresult[2][2]["name"]:
+           result[3] = True
+       if slotresult[0][2]["name"] == slotresult[1][1]["name"] == slotresult[2][0]["name"]:
+           result[4] = True
+       return result
+
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        logger.info("In GetNewFactHandler")
+        logger.info("In GameHandler")
 
+        game = Slot()
+        result = game.game()
+        judge = self.slotmatch(result)
+        image_url = image_processing.create_image(result, judge)
+        print(result)
         random_fact = random.choice(data)
         speech = GET_FACT_MESSAGE + random_fact
         response_builder = handler_input.response_builder
@@ -77,9 +100,10 @@ class GameHandler(AbstractRequestHandler):
             title="Card Title",
             text="Hey this is a sample card",
             image=ui.Image(
-              small_image_url="<Small Image URL>",
-              large_image_url="<Large Image URL>"
+              large_image_url="https://www.multichannel.com/.image/t_share/MTU0MDYzODE5MTk5MDMwMzU0/aws-logojpg.jpg"
             )
+          )
+        )
         return handler_input.response_builder.response
 
 class HelpIntentHandler(AbstractRequestHandler):
