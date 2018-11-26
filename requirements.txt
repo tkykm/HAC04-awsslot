@@ -1,3 +1,4 @@
 ask-sdk-core
 cv2
 numpy
+boto3
