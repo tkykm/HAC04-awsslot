@@ -28,25 +28,6 @@ def picture_in_picture(background, picture, index):
   background[pip_h:pip_h+picture_size,pip_w:pip_w+picture_size] = picture
   return background
 
-def create_image(services):
-  # Load Background Image
-  background = cv2.imread(r'img/background.png', 1)  # '1' read as color image
-  h,w = background.shape[:2]
-  print('image height and width = %d x %d' % (h, w))
-  
-  index = 0
-  for service_list in services:
-    for service in service_list:
-      logo_path = "img/icons/" + service["name"] + ".png"
-      if not os.path.exists(logo_path):
-        print("Icon File(" + service["name"] + ") not exists. exit")
-        sys.exit()
-      logo = cv2.imread(logo_path, 1)
-      background = picture_in_picture(background, logo , index)
-      index += 1
-  #cv2.imwrite("tmp/image.png", background)
-  return background
-
 def draw_line(image, line_num, color):
   if line_num == 0:
     sp = (230, 125)
@@ -64,12 +45,34 @@ def draw_line(image, line_num, color):
     sp = (273, 50)
     ep = (751, 550)
 
-  image_path = "tmp/image.png"
   cv2.line(image, sp, ep, color, thickness=3)
-  cv2.imwrite(image_path, image)
-  return image_path
-  
+  return image
+
 def upload_s3(image_path):
   bucket_name = "reinventalexajap"
   s3 = boto3.resource('s3')
   s3.Bucket(bucket_name).upload_file('tmp/image.png', 'result.png')
+
+def create_image(services, slot_results):
+  # Load Background Image
+  background = cv2.imread(r'img/background.png', 1)  # '1' read as color image
+  h,w = background.shape[:2]
+  print('image height and width = %d x %d' % (h, w))
+  
+  index = 0
+  for service_list in services:
+    for service in service_list:
+      logo_path = "img/icons/" + service["name"] + ".png"
+      if not os.path.exists(logo_path):
+        print("Icon File(" + service["name"] + ") not exists. exit")
+        sys.exit()
+      logo = cv2.imread(logo_path, 1)
+      background = picture_in_picture(background, logo , index)
+      index += 1
+  #cv2.imwrite("tmp/image.png", background)
+  for index in range(len(slot_results)):
+    if slot_results[index] == True:
+      background = draw_line(background, index, (0,255,0))
+  image_path = "tmp/image.png"
+  cv2.imwrite(image_path, background)
+  upload_s3(image_path)
