@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import os
 import sys
+import boto3
 
 def picture_in_picture(background, picture, index):
   padding_top = 50
@@ -65,3 +66,8 @@ def draw_line(image, line_num, color):
 
   cv2.line(image, sp, ep, color, thickness=3)
   cv2.imwrite("tmp/image.png", image)
+
+def upload_s3(image_path):
+  bucket_name = "reinventalexajap"
+  s3 = boto3.resource('s3')
+  s3.Bucket(bucket_name).upload_file('tmp/image.png', 'result.png')
